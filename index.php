@@ -13,13 +13,22 @@
     <!-- External CSS -->
     <link rel="stylesheet" href="./styles/styles.css">
 
-    <title>Hello, world!</title>
+    <title>Parmast | Your Future Parfume Website</title>
   </head>
   <body>
     <?php 
     require_once("config/connection.php");
+    include "config/application.php";
     try {
         if (isset($_POST["submit"])) {
+            // Mengcek apakah ada edit atau delete data
+            if($_POST["submit"] > 0) {
+                edit($_POST["submit"]);
+                return 0;
+            } else if ($_POST["submit"] > 0) {
+                delete($_POST["submit"]);
+                return 0;
+            }
             // Diambil berdasarkan input
             $task_name = $_POST["todo-agenda"]; 
             $parfume_name = $_POST["todo-parfume"];
@@ -33,7 +42,7 @@
             if (mysqli_query($conn, $query)) {
                 echo '<script>alert("Data succesfully updated!")</script>';
             } 
-        }
+        } 
     } catch (Exception $errormsg) {
         echo '<script>alert("Error: ' . $errormsg -> getMessage() . '")</script>';
     }
@@ -127,21 +136,21 @@
                         <form action="index.php" method="post">
                             <div class="mb-3">
                                 <label for="todo-agenda" class="form-label"><b>Agenda</b></label>
-                                <input type="text" class="form-control" id="todo-agenda" name="todo-agenda" placeholder="Write the event" required>
+                                <input type="text" class="form-control" id="todo-agenda" name="todo-agenda" placeholder="Write the event" value="" required>
                                 <p class="form-text">Write your upcoming agenda above</p>
                             </div>
                             <div class="mb-3">
                                 <label for="todo-parfume" class="form-label"><b>Parfume</b></label>
-                                <input type="text" class="form-control" id="todo-parfume" name="todo-parfume" placeholder="Write your parfume" required>
+                                <input type="text" class="form-control" id="todo-parfume" name="todo-parfume" placeholder="Write your parfume" value="" required>
                                 <p class="form-text">Write the parfume you would use</p>
                             </div>
                             <div class="mb-3">
                                 <label for="todo-deadline" class="form-label"><b>Date</b></label>
-                                <input type="date" class="form-control" id="todo-deadline" name="todo-deadline" required>
+                                <input type="date" class="form-control" id="todo-deadline" name="todo-deadline" value="" required>
                             </div>
                             <div class="mb-3">
                                 <label for="todo-time" class="form-label"><b>Time</b></label>
-                                <input type="time" class="form-control" id="todo-time" name="todo-time" required>
+                                <input type="time" class="form-control" id="todo-time" name="todo-time" value="" required>
                             </div>
                             <button type="submit" name="submit" class="btn btn-secondary">Submit</button>
                         </form>     
@@ -183,8 +192,10 @@
                                     <td><?= $date?></td>
                                     <td><?= $time?></td>
                                     <td>
-                                        <button type="button" onclick="<?php echo "edit($idData);" ?>" class="btn btn-success">Edit</button>
-                                        <button type="button" onclick="<?php echo "delete($idData);" ?>" class="btn btn-danger">Delete</button>
+                                        <form action="index.php" method="post">
+                                            <button type="button" name="submit" onclick="edit(<?php echo $idData ?>)" class="btn btn-success" value="<?php echo "$idData" ?>">Edit</button>
+                                            <button type="button" name="submit" onclick="delete(<?php echo $idData ?>)" class="btn btn-danger" value="<?php echo "$idData" ?>">Delete</button>
+                                        </form>
                                     </td>
                                 </tr>
                                 <?php $id++;
